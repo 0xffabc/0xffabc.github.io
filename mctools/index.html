@@ -1,8 +1,10 @@
-<div id = "code" style = "width: 70%; height: 60%; position: fixed; border: 1px solid black; top: 22px; right: 0; border: 0; outline: none">
+<script src="https://gildas-lormeau.github.io/zip.js/demos/lib/zip-full.min.js" ></script>
+
+<div id = "code" style = "width: 75%; height: 60%; position: fixed; border: 1px solid black; top: 22px; right: 0; border: 0; outline: none; overflow: auto; word-break: break-word">
 No file was selected
 </div>
-<div id = "logger" style = "width: calc(70% - 1.5px); height: calc(40% - 23px); position: fixed; bottom: 0; right: 0; border-top: 1px solid black; overflow: auto"> </div>
-<div id = "menu" style = "width: 30%; height: calc(100% - 21px); position: fixed; bottom: 0; left: 0; border-right: 1px solid black">
+<div id = "logger" style = "width: calc(75% - 1.5px); height: calc(40% - 23px); position: fixed; bottom: 0; right: 0; border-top: 1px solid black; overflow: auto; word-break: break-word"> </div>
+<div id = "menu" style = "width: 25%; height: calc(100% - 21px); position: fixed; bottom: 0; left: 0; border-right: 1px solid black; overflow: auto; word-break: break-word">
   
 </div>
 <div style = "position: fixed; top: 0; left: 0; width: 100%; height: 21px; border-bottom: 1px solid black; font-family: monospace">
@@ -32,9 +34,25 @@ async function start(version) {
   log("[*] Fetching from " + version.downloads.client.url);
   
   const req_ = await fetch(version.downloads.client.url);
-  const res_ = await req_.arrayBuffer();
-  
-  log("Fetched client: " + res_ + ", " + res_.length);
+  const res_ = await req_.blob();
+  const zip_ = new zip.ZipReader(new zip.BlobReader(res_)); 
+  const unzipped = await zip_.getEntries({ filenameEncoding: "cp437" });
+  window.unzipped = unzipped;
+  log("Zip file: " + JSON.stringify(zip_));
+  const menu = document.querySelector("#menu");
+  unzipped.forEach(file => {
+    const br = document.createElement("br");
+    const span = document.createElement("span");  
+    span.innerHTML = file.filename;
+    span.onclick = async() => {
+      const data = await file.getData(new zip.BlobWriter(), { onprogress: (e, t) => log("Progress: " + e / t * 100 + "%") });
+      const text = await data.text();
+      document.querySelector("#code").innerHTML = text;
+    };
+    menu.appendChild(span);
+    menu.appendChild(br);
+    log("Adding file " + name + " " + JSON.stringify(file));
+  });
 }
 
 async function version() {
