@@ -39,6 +39,7 @@ async function start(version) {
   const unzipped = await zip_.getEntries({ filenameEncoding: "cp437" });
   window.unzipped = unzipped;
   log("Zip file: " + JSON.stringify(zip_));
+  document.querySelector("#menu").innerHTML = "";
   const menu = document.querySelector("#menu");
   unzipped.forEach(file => {
     const br = document.createElement("br");
@@ -47,12 +48,17 @@ async function start(version) {
     span.onclick = async() => {
       const data = await file.getData(new zip.BlobWriter(), { onprogress: (e, t) => log("Progress: " + e / t * 100 + "%") });
       const text = await data.text();
-      document.querySelector("#code").innerHTML = text;
+      if (file.filename.includes(".png") || file.filename.includes(".jpg") || file.filename.includes(".gif")) 
+          document.querySelector("#code").innerHTML = "<img src = '" + URL.createObjectURL(data) + "'>"
+      else document.querySelector("#code").innerHTML = text;
     };
     menu.appendChild(span);
     menu.appendChild(br);
-    log("Adding file " + name + " " + JSON.stringify(file));
+    try {
+      log("Adding file " + name + " " + JSON.stringify(file));
+    } catch(e) { log("ERR for file " + name + " " + e) }
   });
+  document.querySelector("dialog").remove();
 }
 
 async function version() {
