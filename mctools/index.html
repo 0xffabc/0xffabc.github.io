@@ -1,0 +1,63 @@
+<div id = "code" style = "width: 70%; height: 60%; position: fixed; border: 1px solid black; top: 22px; right: 0; border: 0; outline: none">
+No file was selected
+</div>
+<div id = "logger" style = "width: calc(70% - 1.5px); height: calc(40% - 23px); position: fixed; bottom: 0; right: 0; border-top: 1px solid black; overflow: auto"> </div>
+<div id = "menu" style = "width: 30%; height: calc(100% - 21px); position: fixed; bottom: 0; left: 0; border-right: 1px solid black">
+  
+</div>
+<div style = "position: fixed; top: 0; left: 0; width: 100%; height: 21px; border-bottom: 1px solid black; font-family: monospace">
+  
+  Aquamarine explorer
+  
+  <button onclick = "version()"> Import MC client </button>
+  <button onclick = "mappings()"> Apply Mappings </button>
+</div>
+<script>
+
+function log(data) {
+  document.querySelector("#logger").innerHTML = data + "<br>" + document.querySelector("#logger").innerHTML;
+}
+
+function search(text) {
+  const valid = versions.map(ver => `<option value="${ver.id}">${ver.id}</option>`).filter(e => e.includes(text)).join("");
+  
+  document.querySelector("#sel").innerHTML = valid;
+}
+
+async function start(version) {
+  version = window.versions.find(e => e.id == version).url;
+  const req = await fetch(version);
+  version = await req.json();
+  
+  log("[*] Fetching from " + version.downloads.client.url);
+  
+  const req_ = await fetch(version.downloads.client.url);
+  const res_ = await req_.arrayBuffer();
+  
+  log("Fetched client: " + res_ + ", " + res_.length);
+}
+
+async function version() {
+  const dialog = document.createElement("dialog");
+  dialog.innerHTML = `
+  Fetching versions...
+  `;
+  document.documentElement.appendChild(dialog);
+  
+  dialog.show();
+  const req = await fetch("https://piston-meta.mojang.com/mc/game/version_manifest.json");
+  const res = await req.json();
+  const { versions } = res;
+  window.versions = versions;
+  
+  dialog.innerHTML = `
+  Select client version <br>
+  Search: <input type = "name" onchange = "search(this.value)"><br>
+  <select id = "sel"> 
+    ${versions.map(ver => `<option value="${ver.id}">${ver.id}</option>`).join("")}
+  </select> <button onclick = "start(document.querySelector('#sel').value)"> Import </button>
+  `
+}
+
+</script>
+
