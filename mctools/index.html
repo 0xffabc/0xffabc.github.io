@@ -13,11 +13,32 @@ No file was selected
   
   <button onclick = "version()"> Import MC client </button>
   <button onclick = "mappings()"> Apply Mappings </button>
+  <button onclick = "download()"> Download client </button>
 </div>
 <script>
 
 function log(data) {
   document.querySelector("#logger").innerHTML = data + "<br>" + document.querySelector("#logger").innerHTML;
+};
+
+function download() {
+  if (!window.blobMC) log("ERR! Cannot find parsed minecraft client");
+
+  const url = URL.createObjectURL(window.blobMC);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "true";
+  a.click();
+}
+
+function mappings() {
+  const dialog = document.createElement("dialog");
+  dialog.innerHTML = `
+  Press ESC to exit
+  `;
+  document.documentElement.appendChild(dialog);
+  
+  dialog.show();
 }
 
 function search(text) {
@@ -35,6 +56,7 @@ async function start(version) {
   
   const req_ = await fetch(version.downloads.client.url);
   const res_ = await req_.blob();
+  window.blobMC = res_;
   const zip_ = new zip.ZipReader(new zip.BlobReader(res_)); 
   const unzipped = await zip_.getEntries({ filenameEncoding: "cp437" });
   window.unzipped = unzipped;
