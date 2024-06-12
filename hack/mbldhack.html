@@ -1,0 +1,21 @@
+<body>
+  <iframe id = "root" src = "https://moomoo.io"> </iframe>
+</body>
+<style>
+  body {
+    background: black;
+  }
+  #root {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    border: 0;
+  }
+  @media (orientation: portrait) {
+    #root {
+      transform: rotate(90deg);
+    }
+  }
+</style>
