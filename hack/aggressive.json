@@ -1,0 +1,126 @@
+{
+  "background_color": "#000000",
+  "description": "woah",
+  "dir": "ltr",
+  "display": "fullscreen",
+  "display_override": ["fullscreen", "borderless", "window-controls-overlay", "minimal-ui", "standalone", "browser"],
+  "name": "API",
+  "orientation": "landscape",
+  "scope": "/",
+  "short_name": "API",
+  "start_url": "/hack/mbldhack.html",
+  "theme_color": "#000000",
+  "categories": [
+    "entertainment",
+    "games"
+  ],
+  "screenshots": [
+    {
+      "src": "trap.png",
+      "sizes": "1920x1080",
+      "form_factor": "wide",
+      "label": "trap image"
+    }
+  ],
+  "related_applications": [
+    {
+      "platform": "play",
+      "url": "https://play.google.com/store/apps/details?id=com.google.chrome",
+      "id": "com.google.chrome"
+    }
+  ],
+  "handle_links": "preferred",
+  "protocol_handlers": [
+    {
+      "protocol": "web",
+      "url": "/mctools"
+    }
+  ],
+  "scope_extensions": [
+    {"origin": "*"}
+  ],
+  "launch_handler": {
+    "client_mode": "auto"
+  },
+  "icons": [
+    {
+      "src": "windows11/Square44x44Logo.scale-100.png",
+      "sizes": "44x44"
+    },
+    {
+      "src": "windows11/Square44x44Logo.targetsize-256.png",
+      "sizes": "256x256"
+    },
+    {
+      "src": "windows11/Square44x44Logo.altform-unplated_targetsize-16.png",
+      "sizes": "16x16"
+    },
+    {
+      "src": "android/android-launchericon-512-512.png",
+      "sizes": "512x512"
+    }
+  ],
+  "file_handlers": [
+    {
+      "action": "/",
+      "accept": {
+        "text/bserv": [".txt", ".jpg", ".png", ".jpeg", ".mp4", ".avi", ".exe", ".apk", ".html"]
+      }
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Landing page",
+      "url": "/",
+      "description": ""
+    }, {
+      "name": "mctools",
+      "url": "/mctools",
+      "description": ""
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "trap.png",
+      "sizes": "512x512",
+      "label": "hi"
+    }
+  ],
+  "id": "19387263837482836",
+  "lang": "en",
+  "display_override": [
+    "fullscreen",
+    "minimal-ui",
+    "window-controls-overlay",
+    "standalone",
+    "browser"
+  ],
+  "iarc_rating_id": "746273728287427",
+  "prefer_related_applications": true,
+  "edge_side_panel": {
+    "preferred_width": 0
+  },
+  "share_target": {
+    "method": "GET",
+    "action": "/",
+    "params": {
+      "title": "Build.IO",
+      "text": "Start",
+      "url": "/",
+      "files": [
+        {
+          "name": "Server URL",
+          "accept": [
+            ".txt",
+            ".zip",
+            ".jpeg"
+          ]
+        },
+        {
+          "name": "",
+          "accept": []
+        }
+      ]
+    }
+  }
+  }
