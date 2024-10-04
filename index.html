@@ -4,15 +4,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
  </head>
   <body>
-    <center>
-      <img src = "/assets/0xffabc.png"> <br>
+    <div id = "center">
       <h2> I am 0xffabc, frontend developer </h2>
-      <p> Donations (TON): <br> <input value = "UQDVjx4dTxwrJ_KVJTUr1IYUr9Xa4rlMvsjBRuizCutK3xmF"> </p>
+      <center><p> Donations (TON): <br> <input value = "UQDVjx4dTxwrJ_KVJTUr1IYUr9Xa4rlMvsjBRuizCutK3xmF"> </p></center>
       <p><img src="https://shields.io/badge/JavaScript-F7DF1E?logo=JavaScript&amp;logoColor=000&amp;style=flat-square" alt="i"> <img src="https://shields.io/badge/TypeScript-3178C6?logo=TypeScript&amp;logoColor=FFF&amp;style=flat-square" alt="i"> <img src="https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&amp;logo=vuedotjs&amp;logoColor=4FC08D" alt="i"> <img src="https://img.shields.io/badge/Express.js-404D59?style=for-the-badge" alt="i"> <img src="https://img.shields.io/badge/Rust-000000?style=for-the-badge&amp;logo=rust&amp;logoColor=white" alt="i"></p>
-      <p>You can contact me at my discord (@0xffabc)</p>
+      <center><p>You can contact me at my discord (@0xffabc)</p></center>
       <p><img src="https://github-readme-stats.vercel.app/api?username=0xffabc&amp;show_icons=true&amp;theme=gruvbox" alt="Stats">
-      <img src="https://github-readme-stats.vercel.app/api/top-langs?username=0xffabc&amp;show_icons=true&amp;theme=gruvbox" alt="Stats2"></p>
-    </center>
+    </div>
 
     <style>
       * {
@@ -29,15 +27,28 @@
       }
 
       html {
-        background: #241917;
+        background: url(https://raw.githubusercontent.com/0xffabc/iowm/refs/heads/main/src/wallpapers/desktop-wallpaper-abstract-full-and-background-sci-fi-abstract.jpg);
+        background-size: 100%;
       }
 
-      center {
+      #center {
+        transform: translate(-25%; -25%);
+        position: fixed;
+        top: 25%;
+        left: 25%;
         width: 50%;
         height: 50%;
         background: rgba(0, 0, 0, 0.2);
         backdrop-filter: blur(5px);
         border-radius: 20px;
+        color: rgba(255, 255, 255, 0.9);
+        mix-blend-mode: plus-lighter;
+        transition: all 0.5s;
+      }
+      
+      #center:hover {
+        transform: scale(1.05);
+        
       }
     </style>
   </body>
