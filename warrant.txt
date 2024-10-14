@@ -3,3 +3,4 @@
 
 
 GoodbyeDPI still works 
+Amalthea VPN development is 50% finished
