@@ -27,11 +27,35 @@
 }
     </script>
     <div id = "center">
-      <h2> I am 0xffabc, frontend developer </h2>
-      <center><p> Donations (TON): <br> <input value = "UQDVjx4dTxwrJ_KVJTUr1IYUr9Xa4rlMvsjBRuizCutK3xmF"> </p></center>
-      <p><img src="https://shields.io/badge/JavaScript-F7DF1E?logo=JavaScript&amp;logoColor=000&amp;style=flat-square" alt="i"> <img src="https://shields.io/badge/TypeScript-3178C6?logo=TypeScript&amp;logoColor=FFF&amp;style=flat-square" alt="i"> <img src="https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&amp;logo=vuedotjs&amp;logoColor=4FC08D" alt="i"> <img src="https://img.shields.io/badge/Express.js-404D59?style=for-the-badge" alt="i"> <img src="https://img.shields.io/badge/Rust-000000?style=for-the-badge&amp;logo=rust&amp;logoColor=white" alt="i"></p>
-      <p>You can contact me at my discord (@0xffabc)</p>
-      <p><img src="https://github-readme-stats.vercel.app/api?username=0xffabc&amp;show_icons=true&amp;theme=gruvbox" alt="Stats">
+      <button onclick = "Array.from(document.querySelectorAll('.blocks'), _ => _.style.display = 'none'); document.querySelectorAll('.blocks')[0].style.display = 'block'"> About me </button> <button onclick = "Array.from(document.querySelectorAll('.blocks'), _ => _.style.display = 'none'); document.querySelectorAll('.blocks')[1].style.display = 'block'"> Social & profiles </button> <button onclick = "Array.from(document.querySelectorAll('.blocks'), _ => _.style.display = 'none'); document.querySelectorAll('.blocks')[2].style.display = 'block'"> My projects </button>
+      <div class = "blocks">
+        <h2> I am 0xffabc, frontend developer </h2>
+        <center><p> Donations (TON): <br> <input value = "UQDVjx4dTxwrJ_KVJTUr1IYUr9Xa4rlMvsjBRuizCutK3xmF"> </p></center>
+        <p><img src="https://shields.io/badge/JavaScript-F7DF1E?logo=JavaScript&amp;logoColor=000&amp;style=flat-square" alt="i"> <img src="https://shields.io/badge/TypeScript-3178C6?logo=TypeScript&amp;logoColor=FFF&amp;style=flat-square" alt="i"> <img src="https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&amp;logo=vuedotjs&amp;logoColor=4FC08D" alt="i"> <img src="https://img.shields.io/badge/Express.js-404D59?style=for-the-badge" alt="i"> <img src="https://img.shields.io/badge/Rust-000000?style=for-the-badge&amp;logo=rust&amp;logoColor=white" alt="i"></p>
+        <p>You can contact me at my discord (@0xffabc)</p>
+        <p><img src="https://github-readme-stats.vercel.app/api?username=0xffabc&amp;show_icons=true&amp;theme=gruvbox" alt="Stats">
+      </div>
+      <div class = "blocks" style = "display: none">
+        <h2> Social medias and news </h2> <hr>
+        
+        My github account: <a href = "https://github.com/0xfabc"> @0xffabc </a> <br>
+        Discord: @0xffabc <br> <br> <hr>
+        
+        Global auditory socials <br>
+        YouTube: <a href = "https://youtube.com/0xffabc"> @0xffabc </a> <br>
+        Greasyfork: <a href = "https://greasyfork.org/ru/users/1185687-0xffabc"> @0xffabc </a> <br> <hr>
+        
+        My discord server: <a href = "https://discord.gg/Rd9PfjaewT"> Click here to join </a> <br>
+        
+        Mostly keeping my socials private.
+        
+      </div>
+      <div class = "blocks" style = "display: none">
+        <div class = "info">
+          Ethyr minecraft launcher <br>
+          A minecraft launcher, wr
+        </div>
+      </div>
     </div>
 
     <style>
@@ -67,10 +91,6 @@
         mix-blend-mode: plus-lighter;
         transition: all 0.5s;
         text-align: center;
-      }
-      
-      #center:hover {
-        transform: scale(1.05) translate(-50%, -50%);
       }
     </style>
   </body>
