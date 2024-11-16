@@ -17,7 +17,7 @@ const props = ["nsfwAgree", "nsfwAllowed"];
 **/
 
 for (const property of props) 
-  Object.defineProperty(Object.prototype, {
+  Object.defineProperty(Object.prototype, property, {
     __proto__: null, /** Terminate hook detection via adding hasOwnProperty **/
     get() {
       return true;
