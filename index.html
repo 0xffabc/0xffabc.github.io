@@ -28,6 +28,11 @@
   }
 }
     </script>
+    <script>
+      snowStorm.snowColor = "#ffffff";
+      snowStorm.flakesMaxActive = 100;
+      snowStorm.start();
+    </script>
     <div id = "center">
       <button onclick = "Array.from(document.querySelectorAll('.blocks'), _ => _.style.display = 'none'); document.querySelectorAll('.blocks')[0].style.display = 'block'"> About me </button> <button onclick = "Array.from(document.querySelectorAll('.blocks'), _ => _.style.display = 'none'); document.querySelectorAll('.blocks')[1].style.display = 'block'"> Social & profiles </button> <button onclick = "Array.from(document.querySelectorAll('.blocks'), _ => _.style.display = 'none'); document.querySelectorAll('.blocks')[2].style.display = 'block'"> Projects </button> <button onclick = "Array.from(document.querySelectorAll('.blocks'), _ => _.style.display = 'none'); document.querySelectorAll('.blocks')[3].style.display = 'block'"> Scripts & Downloads </button>
       <div class = "blocks">
