@@ -50,15 +50,44 @@
         Mostly keeping my socials private.
         
       </div>
-      <div class = "blocks" style = "display: none">
-        <div class = "info">
-          Ethyr minecraft launcher <br>
-          A minecraft launcher, wr
+      <div class = "blocks" style = "display: none; height: 40%; text-align: center; overflow: visible">
+        <h2> My projects </h2>
+        Doubleclick to go to project page <br> <br>
+        <div class = "info" ondblclick = "open('https://github.com/0xffabc/msgpackp', '_blank')">
+          <b> Javascript msgpack implementation <font color = "green"> Finished, Rewriting in Rust </font> </b> <br>
+          Supports all types except ext, timestamp, bin and f32, but operates over data way faster than alternatives
+        </div> <br>
+        <div class = "info" ondblclick = "open('https://github.com/0xffabc/EthyrMC', '_blank')">
+          <b> Ethyr minecraft launcher <font color = "green"> Finished, Rewriting in Rust </font> </b> <br>
+          A minecraft launcher, written in Node.js, with mods support, forge and optifine
+        </div> <br>
+        <div class = "info" ondblclick = "open('https://github.com/0xffabc/iowm', '_blank')">
+          <b> Electron desktop environment <font color = "lightgreen"> Finished </font> </b> <br>
+          Desktop environment, written in Node.js/electron. Eats less ram than windows' 10 explorer.exe
+        </div> <br>
+        <div class = "info" ondblclick = "open('https://github.com/0xjsc/buildio-bundle', '_blank')">
+          <b> Mohmoh.eu source code debundled <font color = "lightgreen"> Finished </font> </b> <br>
+          Contains beatified, splitted into es6 modules and refactored variables edit of original mohmoh's bundle.
+        </div> <br>
+        <div class = "info" ondblclick = "open('https://github.com/0xffabc/kogama-emerald-console', '_blank')">
+          <b> Working kogama.com afterpatch cheat client <font color = "lightgreen"> Finished </font> </b> <br>
+          Old source code shared in typescript, new simplified userscript shared in javascript
+        </div> <br>
+        <div clasa = "info" ondblclick = "">
+          <b> Suffer </b> <font color = "yellow"> In solo development </font> <br>
+          VPN protocol, made to work in worst cases with DPI, firewalls and in some cases with ip whitelisting
         </div>
       </div>
     </div>
 
     <style>
+      .info {
+        width: 100%;
+        height: auto;
+        border-radius: 20px;
+        backdrop-filter: blur(5px);
+        background: rgba(0, 0, 0, 0.5);
+      }
       * {
         font-family: Arial;
       }
