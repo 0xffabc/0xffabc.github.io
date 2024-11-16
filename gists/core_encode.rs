@@ -177,14 +177,14 @@ fn main() {
     let mut _encoder: CoreEncode = CoreEncode { buffer: vec![] };
     
     _encoder.start_arr(Lengths::U8(2u8))
-        .string("hi ahhh daddy~~".to_owned())
+        .string("hi".to_owned())
         .start_map(Lengths::U8(3u8))
-        .string("yohhhhhh".to_owned())
-        .string("smegs".to_owned())
-        .string("flarez gayming".to_owned())
+        .string("a".to_owned())
+        .string("op packer".to_owned())
+        .string("flarez rusting".to_owned())
         .number(SupportedNumbers::F32(1.23f32))
-        .string("wow savege penis so big only 3cm".to_owned())
-        .number(SupportedNumbers::F64(1488.69420f64));
+        .string("wow savege so tall only 4'3".to_owned())
+        .number(SupportedNumbers::F64(14.78420f64));
     
     println!("{:?}", _encoder.buffer);
 }
