@@ -3071,7 +3071,7 @@ class Player {
           this.reloads[this.gatherIndex] = baseSpeed;
           this.attacked = true;
         }
-        if (this.shooting[1] && this.weapons[1] != 10) {
+        if (this.shooting[1]) {
           let baseSpeed = items.weapons[this.shootIndex].speed * (this.skinIndex == 20 ? 0.78 : 1);
 
           if (baseSpeed > pingTime) baseSpeed -= pingTime;
@@ -4183,7 +4183,7 @@ function updateItems(data, wpn) {
 function addProjectile(x, y, dir, range, speed, indx, layer, sid) {
   projectileManager.addProjectile(x, y, dir, range, speed, indx, null, null, layer, true).sid = sid;
 
-  const player_ = players.sort((a, b) => Math.hypot(a.x - x, a.y - y) - Math.hypot(b.x - x, b.y - y))[0];
+  const player_ = players.sort((a, b) => Math.hypot(a.x - x, a.y - y) - Math.hypot(b.x - x, b.y - y)).filter(e => e.weapons[1] != 10)[0];
 
   player_.shooting[1] = true;
 }
