@@ -5,7 +5,6 @@
 // @match        *://*.moomoo.io/*
 // @match        *://*.mohmoh.eu/*
 // @match        *://mohmoh-vanilla.onrender.com/*
-// @match        *://discord.com/robots.txt
 // @run-at       document-start
 // ==/UserScript==
 
@@ -4125,6 +4124,8 @@ function gatherAnimation(sid, didHit, index) {
       let val = items.weapons[index].dmg * (config.weaponVariants[tmpObj[(index < 9 ? "prima" : "seconda") + "ryVariant"]]?.val || 1) * (items.weapons[index]?.sDmg || 1) * (virtualSkin == 40 && player.skins[40] ? 3.3 : 1);
       for (let i = 0; i < gameObjects.length; i++) {
         const obj = gameObjects[i];
+        const baseAngle = Math.atan2(obj.y - tmpObj.y3, obj.x - tmpObj.x3);
+
         if (Math.hypot(tmpObj.x3 - obj.x, tmpObj.y3 - obj.y) > items.weapons[index].range + config.playerScale) continue;
         obj.health -= val;
       };
