@@ -2831,7 +2831,7 @@ class Player {
       this.gathering = 0;
       this.gatherIndex = 0;
       this.shooting = {};
-      this.shootIndex = 9;
+      this.shootIndex = 15;
       this.autoGather = 0;
       this.animTime = 0;
       this.animSpeed = 0;
@@ -3059,6 +3059,7 @@ class Player {
 
           this.shooting[1] = 0;
           this.reloads[this.shootIndex] = baseSpeed;
+          if (this.weapons[1]) this.reloads[this.weapons[1]] = baseSpeed;
           this.attacked = true;
         }
       } else {
@@ -4160,7 +4161,6 @@ function addProjectile(x, y, dir, range, speed, indx, layer, sid) {
 
   const player_ = players.sort((a, b) => Math.hypot(a.x - x, a.y - y) - Math.hypot(b.x - x, b.y - y))[0];
 
-  player_.shootIndex = player_.weapons[1];
   player_.shooting[1] = true;
 }
 // REMOVE PROJECTILE:
