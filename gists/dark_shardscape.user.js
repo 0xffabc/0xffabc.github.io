@@ -4187,7 +4187,7 @@ function updateItems(data, wpn) {
 function addProjectile(x, y, dir, range, speed, indx, layer, sid) {
   projectileManager.addProjectile(x, y, dir, range, speed, indx, null, null, layer, true).sid = sid;
 
-  const player_ = players.sort((a, b) => Math.hypot(a.x - x, a.y - y) - Math.hypot(b.x - x, b.y - y)).filter(e => e.weapons[1] != 10)[0];
+  const player_ = players.sort((a, b) => Math.hypot(a.x - x, a.y - y) - Math.hypot(b.x - x, b.y - y)).filter(e => e.weapons[1] != 10 && Math.hypot(e.x - x, e.y - y) < 100)[0];
   if (!player_) return;
 
   player_.shooting[1] = true;
