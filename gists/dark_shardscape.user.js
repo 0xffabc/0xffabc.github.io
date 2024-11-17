@@ -1038,6 +1038,10 @@ WebSocket.prototype.send = new Proxy(WebSocket.prototype.send, {
     const msg = msgpack.decode(argsArr[0]);
 
     if ((!isMohMoh ? ["0", "F"] : ["pp", "c", "2"]).includes(msg[0]) && /bundle|assets/gm.test((new Error).stack)) return;
+    if ((isMohMoh ? "2" : "D") == msg[0] && /bundle|assets/gm.test((new Error).stack)) {
+      msg[1][0] = getAttackDir();
+      argsArr[0] = new Uint8Array(msgpack.encode(msg));
+    }
 
     return Reflect.apply(targetObj, thisObj, argsArr);
   }
@@ -4185,7 +4189,7 @@ function addProjectile(x, y, dir, range, speed, indx, layer, sid) {
 
   const player_ = players.sort((a, b) => Math.hypot(a.x - x, a.y - y) - Math.hypot(b.x - x, b.y - y)).filter(e => e.weapons[1] != 10)[0];
   if (!player_) return;
-  
+
   player_.shooting[1] = true;
 }
 // REMOVE PROJECTILE:
