@@ -92,6 +92,15 @@ CanvasRenderingContext2D.prototype.strokeText = new Proxy(CanvasRenderingContext
   }
 });
 
+CanvasRenderingContext2D.prototype.lineTo = new Proxy(CanvasRenderingContext2D.prototype.lineTo, {
+  __proto__: null,
+  apply(target, that, args) {
+    if (that.globalAlpha == 0.06 && !configurer.showGrid) return;
+
+    return target.apply(that, args);
+  }
+})
+
 function animate(ctx) {
   if (!player) return;
 
@@ -135,7 +144,7 @@ function animate(ctx) {
 
   if (configurer.doBuildingHp) {
     for (const obj of nearestGameObjects) {
-      if (Math.abs(player.x3 - obj.x) + Math.abs(player.y3 - obj.y) > 300) continue;
+      if (Math.abs(player.x3 - obj.x) + Math.abs(player.y3 - obj.y) > 300 || isNaN(+obj.health)) continue;
       const dx = obj.x - xOffset;
       const dy = obj.y - yOffset;
 
@@ -148,9 +157,9 @@ function animate(ctx) {
   }
 };
 
-const el = document.createElement("div");
-el.style = "background: rgba(0, 0, 40, 0.3); width: 100%; height: 100%; position: fixed; top: 0; left: 0; pointer-events: none; z-index: 10";
-document.documentElement.appendChild(el);
+const elShadow = document.createElement("div");
+elShadow.style = "background: rgba(0, 0, 40, 0.3); width: 100%; height: 100%; position: fixed; top: 0; left: 0; pointer-events: none; z-index: 10";
+document.documentElement.appendChild(elShadow);
 
 let temp$ = Symbol("append");
 
@@ -606,6 +615,7 @@ const configurer = {
   doAutoBuy: true,
   doAutoBuyEquip: true,
   doAutoBreakSpike: false,
+  showGrid: true,
   doAutoPush: true,
   doRevTick: true,
   doSpikeTick: true,
@@ -624,6 +634,18 @@ const configurer = {
   doPredictPlace: true,
   doNameTags: true,
   do360Hit: location.host.includes("mohmoh"),
+  darkness_: true,
+  set disableDarkness(val) {
+    if (val) {
+      this.darkness_ = true;
+      elShadow.style.background = "rgba(0, 0, 0, 0.3)";
+    } else {
+      this.darkness_ = false;
+      elShadow.style.background = "transparent";
+    }
+  }, get disableDarkness() {
+    return this.darkness_;
+  }
 };
 class Toggle {
   constructor(column, name, option, description) {
@@ -685,9 +707,10 @@ new Toggle("column3", "Autopush", "doAutoPush", "Automatically pushes enemy to s
 new Toggle("column3", "Autobuy", "doAutoBuy", "Automatically buys hats and accessories");
 new Toggle("column3", "Autoplace", "doAutoPlace", "Places traps / spikes around");
 new Toggle("column3", "Autoreplace", "doAutoReplace", "Tries to replace trap or spike when its broken");
-new Toggle("column4", "Dev nametags", "doNameTags", "Shows nametags of developers or testers");
+new Toggle("column4", "Disable dark mode", "disableDarkness", "Disables dark mode, in case if you want to brutally kill eyes");
 new Toggle("column4", "Building health", "doBuildingHp", "Shows health of builds");
 new Toggle("column4", "Predict place", "doPredictPlace", "Shows building that's placement is in progress or enqueued but not placed");
+new Toggle("column4", "Show gridlines", "showGrid", "Shows native grids. Disable for better performance");
 new Toggle("column4", "Disable rotations", "doDisableRot", "Disables every rotation in the game");
 new Toggle("column4", "Visual autospin", "doVisualSpin", "Makes your player spin");
 new Toggle("column4", "Client autospin", "doClientSpin", "Modifies artcangent function to make your player spin");
