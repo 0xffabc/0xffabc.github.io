@@ -598,6 +598,7 @@ client_menu.addEventListener("dragend", e => {
   client_menu.style.left = e.clientX + offsetX + "px";
 });
 const configurer = {
+  agressive: true,
   doPrePlace: location.host.includes("mohmoh"),
   doAutoHold: true,
   doFastSwitch: true,
@@ -707,6 +708,7 @@ new Toggle("column3", "Autopush", "doAutoPush", "Automatically pushes enemy to s
 new Toggle("column3", "Autobuy", "doAutoBuy", "Automatically buys hats and accessories");
 new Toggle("column3", "Autoplace", "doAutoPlace", "Places traps / spikes around");
 new Toggle("column3", "Autoreplace", "doAutoReplace", "Tries to replace trap or spike when its broken");
+new Toggle("column4", "BeatifulCombat++", "agressive", "Adds more dynamicity to combat");
 new Toggle("column4", "Disable dark mode", "disableDarkness", "Disables dark mode, in case if you want to brutally kill eyes");
 new Toggle("column4", "Building health", "doBuildingHp", "Shows health of builds");
 new Toggle("column4", "Predict place", "doPredictPlace", "Shows building that's placement is in progress or enqueued but not placed");
@@ -735,8 +737,13 @@ CanvasRenderingContext2D.prototype.rotate = new Proxy(CanvasRenderingContext2D.p
 Math.atan2 = new Proxy(Math.atan2, {
   __proto__: null,
   apply(target, that, args) {
-    if (configurer.doClientSpin && (new Error().stack.includes("bundle") || new Error().stack.includes("assets")) && (new Error().stack.includes("getAttackDir") || new Error().stack.includes("gr"))) return Math.cos(Date.now()) * 12;
-    return target.apply(that, args);
+    let dir = 0;
+    if (configurer.agressive && (new Error().stack.includes("bundle") || new Error().stack.includes("assets")) && (new Error().stack.includes("getAttackDir") || new Error().stack.includes("gr"))) {
+      dir = player.isReloaded(player.weaponIndex) ? target.apply(that, args) : getAttackDir();
+    }
+    if (configurer.doClientSpin && (new Error().stack.includes("bundle") || new Error().stack.includes("assets")) && (new Error().stack.includes("getAttackDir") || new Error().stack.includes("gr"))) dir = Math.cos(Date.now()) * 12;
+
+    return dir || target.apply(that, args);
   }
 })
 
@@ -974,6 +981,10 @@ progress {
   bottom: 0;
   backdrop-filter: blur(5px);
   border-radius: 10px;
+}
+
+#allianceMenu {
+  transition: all 2s 2s;
 }
 
 .menuCard {
