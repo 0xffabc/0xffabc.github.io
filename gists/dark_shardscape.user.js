@@ -3325,7 +3325,7 @@ let spikes = {
   inRange: false,
   info: {}
 }
-let autoBuy = new Autobuy([15, 31, 6, 7, 12, 11, 26, 40], [11, 21]);
+let autoBuy = new Autobuy([15, 31, 6, 7, 12, 11, 26, 53, 40], [11, 21]);
 
 function sendChat(message) {
   packet("6", message.slice(0, 30));
@@ -3962,8 +3962,6 @@ function onUpdate() {
     const anglePerfect = angles.sort((a, b) => Math.abs(a - angle) - Math.abs(b - angle))[0];
 
     place(2, anglePerfect, 0);
-    setTimeout(() => place(2, anglePerfect, 0), 37);
-    setTimeout(() => place(2, anglePerfect, 0), 74);
   });
 
   doNotEquip = false;
@@ -4002,7 +4000,7 @@ function onUpdate() {
     traps.autoPlace();
 
 
-    if (accChanger() && (near && near.skinIndex != 6) && typeof waitInsta == "number" && player.isReloaded(player.weapons[0]) && player.isReloaded(player.weapons[1]) && near.dist2 < items.weapons[player.weapons[0]].range + config.playerScale) {
+    if ((near && near.skinIndex != 6) && typeof waitInsta == "number" && player.isReloaded(player.weapons[0]) && player.isReloaded(player.weapons[1]) && (near.dist2 < items.weapons[player.weapons[0]].range + config.playerScale || waitInsta > 0)) {
       waitInsta = (+waitInsta) + 1;
       my.autoAim = true;
 
@@ -4017,7 +4015,7 @@ function onUpdate() {
         waitInsta = false;
         my.autoAim = false;
       }
-    } else if (accChanger() && (near && near.skinIndex != 6) && typeof reverseInsta == "number" && player.isReloaded(player.weapons[0]) && player.isReloaded(player.weapons[1]) && near.dist2 < items.weapons[player.weapons[0]].range + config.playerScale) {
+    } else if ((near && near.skinIndex != 6) && typeof reverseInsta == "number" && player.isReloaded(player.weapons[0]) && player.isReloaded(player.weapons[1]) && (near.dist2 < items.weapons[player.weapons[0]].range + config.playerScale || reverseInsta > 0)) {
       reverseInsta = (+reverseInsta) + 1;
       my.autoAim = true;
 
@@ -4033,8 +4031,7 @@ function onUpdate() {
         buyEquip(53);
         sendAutoGather();
       }
-    } else if (typeof reverseInsta == "number") reverseInsta = false;
-    else if (typeof waitInsta == "number") waitInsta = false;
+    }
 
     if (storeMenu.style.display != "block") {
       accChanger() && hatChanger();
@@ -4068,13 +4065,17 @@ function onUpdate() {
   if (!inGame || !player || !player?.alive) return;
   updateQueue();
 
+  const correctWeapon = traps.inTrap ? (player.weapons[1] == 10 ? 10 : player.weapons[0]) :
+  (clicks.right || clicks.left) ?
+        ((clicks.right && player.weapons[1] == 10 && !traps.ez) ? player.weapons[1] : player.weapons[0]) :
+  (!player.isReloaded(player.weapons[1]) ? player.weapons[1] : !player.isReloaded(player.weapons[0]) ? player.weapons[0] :
+  (player.weapons[1] == 10 ? 10 : player.weapons[0]));
+
+  if (player.weaponIndex != correctWeapon || player.buildIndex > -1) {
+    selectWeapon(correctWeapon);
+  }
+
   if (!clicks.middle && (clicks.left || clicks.right)) {
-    const correctWeapon = (clicks.right && player.weapons[1] == 10 && !traps.ez) ? player.weapons[1] : player.weapons[0];
-
-    if (player.weaponIndex != correctWeapon || player.buildIndex > -1) {
-      selectWeapon(correctWeapon);
-    }
-
     if (player.isReloaded(player.weaponIndex) || player.isReloaded(correctWeapon) || traps.ez) {
       if (accChanger()) {
         hatChanger();
@@ -4086,12 +4087,7 @@ function onUpdate() {
   }
 
   if (traps.inTrap) {
-    const bestWeapon = player.weapons[1] == 10 ? 10 : player.weapons[0];
-    if (player.weaponIndex != bestWeapon || player.buildIndex > -1) {
-      selectWeapon(bestWeapon);
-    }
-
-    if (player.isReloaded(bestWeapon) && hatChanger()) {
+    if (player.isReloaded(correctWeapon) && hatChanger()) {
       sendAutoGather();
     }
   }
@@ -4161,6 +4157,11 @@ function updateItems(data, wpn) {
 // ADD PROJECTILE:
 function addProjectile(x, y, dir, range, speed, indx, layer, sid) {
   projectileManager.addProjectile(x, y, dir, range, speed, indx, null, null, layer, true).sid = sid;
+
+  const player_ = players.sort((a, b) => Math.hypot(a.x - x, a.y - y) - Math.hypot(b.x - x, b.y - y))[0];
+
+  player_.shootIndex = player_.weapons[1];
+  player_.shooting[1] = true;
 }
 // REMOVE PROJECTILE:
 function remProjectile(sid, range) {
