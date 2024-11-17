@@ -3071,7 +3071,7 @@ class Player {
           this.reloads[this.gatherIndex] = baseSpeed;
           this.attacked = true;
         }
-        if (this.shooting[1]) {
+        if (this.shooting[1] && this.reloads[this.weapons[1]] != 10) {
           let baseSpeed = items.weapons[this.shootIndex].speed * (this.skinIndex == 20 ? 0.78 : 1);
 
           if (baseSpeed > pingTime) baseSpeed -= pingTime;
