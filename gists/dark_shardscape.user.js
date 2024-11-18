@@ -750,6 +750,9 @@ Math.atan2 = new Proxy(Math.atan2, {
 Object.defineProperty(Object.prototype, "dirPlus", {
   __proto__: null,
   get() {
+    if (this.sid == playerSID && player && player.reloads[player.weaponIndex] == 0 && traps.inTrap) this.visible = false;
+    else this.visible = true;
+
     if (configurer.doVisualSpin && this.sid == playerSID) return Math.cos(Date.now()) * 12;
     return this._dirPlus;
   }, set(value) {
@@ -3284,7 +3287,7 @@ class Traps {
 
       return conditions;
     }
-    this.autoPlace = function(noObj, objSid_ = null, start = 0, end = Math.PI * 2, force = false, onlyAngles = false) {
+    this.autoPlace = function(noObj, objSid_ = null, start = 0, end = Math.PI * 2, force = false, onlyAngles = false, patternal = true) {
       if ((enemy.length && enemy[0].dist2 < 600 && configurer.doAutoPlace) || force) {
         let near2 = {
           inTrap: false,
@@ -3300,9 +3303,13 @@ class Traps {
         if (player.y3 >= config.mapScale / 2 - config.riverWidth / 2 && player.y3 <= config.mapScale / 2 + config.riverWidth / 2) return;
 
         const objSid = objSid_ || ((near2.inTrap || (player.isReloaded(player.weapons[0]))) && near.dist2 < items.weapons[player.weaponIndex].range + config.playerScale ? 2 : 4);
+        const objScale = items.list[objSid].scale;
+
+        const badObjects = nearestGameObjects.filter(e => e.sid != noObj && Math.hypot(player.x3 - e.x, player.y3 - e.y) <= e.scale + objScale + config.playerScale).sort((a, b) => Math.atan2(a.y - player.y3, a.x - player.x3) - Math.atan2(b.y - player.y3, b.x - player.x3));
+
         const angleGen = this.generateAngles(near2, objSid, noObj, start, end);
 
-        let maxPlace = 4;
+        let maxPlace = 12;
         let val = null;
 
         if (onlyAngles) return [...angleGen];
@@ -4107,7 +4114,7 @@ function onUpdate() {
   (clicks.right || clicks.left) ?
         ((clicks.right && player.weapons[1] == 10 && !traps.ez) ? player.weapons[1] : player.weapons[0]) :
   (!player.isReloaded(player.weapons[1]) ? player.weapons[1] : !player.isReloaded(player.weapons[0]) ? player.weapons[0] :
-  (player.weapons[1] == 10 ? 10 : player.weapons[0]));
+  ((player.weapons[1] == 10 && player.weapons[0] != 7) ? 10 : player.weapons[0]));
 
   if (player.weaponIndex != correctWeapon || player.buildIndex > -1) {
     selectWeapon(correctWeapon);
