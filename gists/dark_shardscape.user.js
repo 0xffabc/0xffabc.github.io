@@ -256,7 +256,7 @@ function animate(ctx) {
     ctx.save();
     ctx.beginPath();
     ctx.filter = "brightness(70%)";
-    ctx.globalAlpha = Math.max(0, 1 - (performance.now() - preplacerObj.time) / (SD + game.nextTick + pingTime));
+    ctx.globalAlpha = Math.max(0.65, 1 - (performance.now() - preplacerObj.time) / (SD + game.nextTick + pingTime));
     ctx.drawImage(spikeImg, preplacerObj.x - xOffset - spikeImg.width / 2, preplacerObj.y - yOffset - spikeImg.height / 2);
     ctx.closePath();
     ctx.restore();
@@ -3456,16 +3456,22 @@ class Traps {
       }
     }
     this.replacer = function(obj) {
-      if (!inGame || configurer.doWeaponGrind) return;
-      if (near.dist2 > 180 || !near?.dist2) return;
-
       const angle = Math.atan2(obj.y - player.y3, obj.x - player.x3);
+      const angles = traps.autoPlace(obj.sid, null, angle - Math.PI / 3, angle + Math.PI / 3, true, true);
+      const anglePerfect = angles.sort((a, b) => Math.abs(a - angle) - Math.abs(b - angle))[0];
 
-      const angles = traps.autoPlace(obj.sid, null, angle - Math.PI / 3, angle + Math.PI / 3, false, true);
+      const tmpObj = Object.assign(obj, {
+        x: player.x3 + Math.cos(anglePerfect) * 90,
+        y: player.y3 + Math.sin(anglePerfect) * 90,
+      });
+
+      preplacerObj = tmpObj;
+      preplacerObj.time = performance.now();
 
       if (!angles?.length) return;
 
-      const anglePerfect = angles.sort((a, b) => Math.abs(a - angle) - Math.abs(b - angle))[0];
+      if (!inGame || configurer.doWeaponGrind) return;
+      if (near.dist2 > 180 || !near?.dist2) return;
 
       place(2, anglePerfect);
     };
@@ -3800,10 +3806,6 @@ function updateUpgrades(points, age) {
 function killObject(sid) {
   const tmpObj = findObjectBySid(sid);
 
-  if (tmpObj) {
-    preplacerObj = tmpObj;
-    preplacerObj.time = performance.now();
-  }
   tmpObj && traps.replacer(tmpObj);
   objectManager.disableBySid(sid);
   if (player) {
