@@ -89,6 +89,23 @@ window.lagCompensation = function (player, type, value) {
   }
 };
 
+Object.defineProperties(Object.prototype, {
+  y: {
+    get() {
+      return this._y;
+    }, set(val) {
+      this._y = val;
+      if (/injectNewBundle/gm.test(new Error().stack)) {
+        const player = players.find(e => e.sid == this.sid);
+        if (player) {
+          player.x = this.x;
+          player.y = val;
+        }
+      }
+    }
+  }
+})
+
 window.getSkinIndex = function (sid, skinIndex_) {
   return (sid == playerSID) ? skinIndex : skinIndex_;
 }
@@ -207,20 +224,9 @@ function animate(ctx) {
   if (!player) return;
 
   const deltat = performance.now() - lastUpd;
-  const tmpDist = Math.hypot(camX - player.x, camY - player.y) / 2;
+  const tmpDist = Math.hypot(camX - player.x, camY - player.y);
   const tmpDir = Math.atan2(player.y - camY, player.x - camX);
   const camSpd = Math.min(tmpDist * 0.01 * deltat, tmpDist);
-
-  for (const player_ of players) {
-    player.dt += deltat;
-
-    let tmpDiff = player_.x3 - (player_.x1 || player.x3);
-    let tmpRate = Math.min(1.7, player_.dt / 170);
-
-    player_.x = (player_.x1 || player.x3) + tmpDiff * tmpRate;
-    tmpDiff = player_.y3 - (player_.y1 || player.y3);
-    player_.y = (player_.y1 || player.y3) + tmpDiff * tmpRate;
-  }
 
   lastUpd = performance.now();
 
@@ -4005,8 +4011,8 @@ function updatePlayers(data) {
       if (!tmpObj.isTeam(player)) enemy.push(tmpObj);
       tmpObj.t1 = (tmpObj.t2 === undefined) ? game.lastTick : tmpObj.t2;
       tmpObj.t2 = game.lastTick;
-      tmpObj.x1 = tmpObj.x;
-      tmpObj.y1 = tmpObj.y;
+      tmpObj.x1 = tmpObj.x2;
+      tmpObj.y1 = tmpObj.y2;
       tmpObj.oldX = tmpObj.x2;
       tmpObj.oldY = tmpObj.y2;
       tmpObj.dt = 0;
