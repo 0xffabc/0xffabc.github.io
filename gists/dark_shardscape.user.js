@@ -47,6 +47,9 @@
 - Fix visuals being jagged on high distances
 **/
 
+const spikeImg = new Image();
+spikeImg.src = "https://mohmoh-vanilla.onrender.com/resources/7.png";
+
 const bundleDir = /function ([a-z]{2})\(\)\{return ([a-zA-Z])\?\(\!([a-zA-Z])\.lockDir&&!([a-z]{2})&&\(([a-zA-Z]{2})=Math\.atan2\(([a-zA-Z]{2})-([a-zA-Z]{2})\/2,([a-zA-Z]{2})-([a-zA-Z]{2})\/2\)\)/gm;
 const bundleAttackDirRender = /(\w+)\=\((\w+)==(\w+)\?(\w+)\(\):(\w+)\.dir\)\+(\w+)\.dirPlus/gm;
 const bundleStackRegexNew = /(\(http[s]:\/\/((sandbox|dev|mm_beta)\.|)moomoo\.io\/assets\/\w+-\w+\.js:\d+:\d+\))|bundle\.js/gm;
@@ -246,9 +249,9 @@ function animate(ctx) {
   if (preplacerObj) {
     ctx.save();
     ctx.beginPath();
-    ctx.fillStyle = "rgba(70, 70, 255, 0.3)";
-    ctx.arc(preplacerObj.x - xOffset, preplacerObj.y - yOffset, preplacerObj.scale, 0, 6.3);
-    ctx.fill();
+    ctx.filter = "brightness(70%)";
+    ctx.globalAlpha = Math.max(0, 1 - (performance.now() - preplacerObj.time) / (SD + game.nextTick + pingTime));
+    ctx.drawImage(spikeImg, preplacerObj.x - xOffset - spikeImg.width / 2, preplacerObj.y - yOffset - spikeImg.height / 2);
     ctx.closePath();
     ctx.restore();
   }
@@ -2372,6 +2375,7 @@ class Objectmanager {
           gameObjects.push(tmpObj);
           traps.tempObjects = traps.tempObjects.filter(e => Math.hypot(x - e.x, y - e.y) > e.scale + tmpObj.scale);
           placedThisTick = placedThisTick.filter(e => Math.hypot(x - e.x, y - e.y) > e.scale + tmpObj.scale);
+          if (preplacerObj && Math.hypot(preplacerObj.x - x, preplacerObj.y - y) < 90) preplacerObj = null;
         }
       }
       if (setSID) {
@@ -3788,7 +3792,13 @@ function updateUpgrades(points, age) {
 }
 // KILL OBJECT:
 function killObject(sid) {
-  findObjectBySid(sid) && traps.replacer(findObjectBySid(sid));
+  const tmpObj = findObjectBySid(sid);
+
+  if (tmpObj) {
+    preplacerObj = tmpObj;
+    preplacerObj.time = performance.now();
+  }
+  tmpObj && traps.replacer(tmpObj);
   objectManager.disableBySid(sid);
   if (player) {
     for (let i = 0; i < gameObjects.length; i++) {
@@ -4091,7 +4101,6 @@ function checkPotHit() {
 
 function onUpdate() {
   const ticksClamp = Math.ceil(pingTime / 111);
-
   nearestGameObjects.sort((a, b) => Math.hypot(b.x - near.x3, b.y - near.y3) - Math.hypot(a.x - near.x3, a.y - near.y3)).forEach(obj => {
     if (near.dist2 > 180 ||
         Math.hypot(obj.x - player.x3, obj.y - player.y3) > config.playerScale + obj.scale) return;
@@ -4104,7 +4113,6 @@ function onUpdate() {
     const anglePerfect = angles.sort((a, b) => Math.abs(a - angle) - Math.abs(b - angle))[0];
 
     place(2, anglePerfect, 0);
-    preplacerObj = obj;
   });
 
   doNotEquip = false;
