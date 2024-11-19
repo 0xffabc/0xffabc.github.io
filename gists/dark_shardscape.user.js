@@ -135,11 +135,23 @@ function animate(ctx) {
 
   for (const obj of placedThisTick) {
     if (!configurer.doPredictPlace) continue;
+    ctx.save();
     ctx.beginPath();
     ctx.strokeStyle = "rgba(0, 0, 0, 0.3)";
     ctx.arc(obj.x - xOffset, obj.y - yOffset, obj.scale, 0, 6.3);
     ctx.stroke();
     ctx.closePath();
+    ctx.restore();
+  }
+
+  if (preplacerObj) {
+    ctx.save();
+    ctx.beginPath();
+    ctx.fillStyle = "rgba(70, 70, 255, 0.3)";
+    ctx.arc(preplacerObj.x - xOffset, preplacerObj.y - yOffset, preplacerObj.scale, 0, 6.3);
+    ctx.fill();
+    ctx.closePath();
+    ctx.restore();
   }
 
   if (configurer.doBuildingHp) {
@@ -149,10 +161,11 @@ function animate(ctx) {
       const dy = obj.y - yOffset;
 
       const font = "" + ctx.font;
+      ctx.save();
       ctx.font = ctx.font.replace(/(\d\d)px/gm, "20px");
       ctx.strokeText_(Math.trunc(obj.health / obj.maxHealth * 100) + "%", dx, dy);
       ctx.fillText(Math.trunc(obj.health / obj.maxHealth * 100) + "%", dx, dy);
-      ctx.font = font;
+      ctx.restore();
     }
   }
 };
@@ -3980,6 +3993,7 @@ function updatePlayers(data) {
 
 let poisonDebuffs = [];
 let lastPot = 0;
+let preplacerObj;
 
 function checkPotHit() {
   return player.isReloaded(player.weaponCode) || near.isReloaded(near.weapons[0]) || near.isReloaded(near.weapons[1]);
@@ -3994,19 +4008,19 @@ function onUpdate() {
   player.x3 = player.x2 + (configurer.usePredictions ? ((Math.cos(player.moveDir) * calculateVelocity(player) * ticksClamp) || 0) : 0);
   player.y3 = player.y2 + (configurer.usePredictions ? ((Math.sin(player.moveDir) * calculateVelocity(player) * ticksClamp) || 0) : 0);
 
-  nearestGameObjects.forEach(obj => {
+  nearestGameObjects.sort((a, b) => Math.hypot(b.x - near.x3, b.y - near.y3) - Math.hypot(a.x - near.x3, a.y - near.y3)).forEach(obj => {
     if (near.dist2 > 180 ||
         Math.hypot(obj.x - player.x3, obj.y - player.y3) > config.playerScale + obj.scale) return;
 
     const angle = Math.atan2(obj.y - player.y3, obj.x - player.x3);
-
-    const angles = traps.autoPlace(obj.sid, null, angle - Math.PI / 3, angle + Math.PI / 3, false, true);
+    const angles = traps.autoPlace(obj.sid, null, angle - Math.PI / 2, angle + Math.PI / 2, false, true);
 
     if (!angles?.length) return;
 
     const anglePerfect = angles.sort((a, b) => Math.abs(a - angle) - Math.abs(b - angle))[0];
 
     place(2, anglePerfect, 0);
+    preplacerObj = obj;
   });
 
   doNotEquip = false;
