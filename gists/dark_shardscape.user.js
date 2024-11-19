@@ -47,6 +47,105 @@
 - Fix visuals being jagged on high distances
 **/
 
+const bundleDir = /function ([a-z]{2})\(\)\{return ([a-zA-Z])\?\(\!([a-zA-Z])\.lockDir&&!([a-z]{2})&&\(([a-zA-Z]{2})=Math\.atan2\(([a-zA-Z]{2})-([a-zA-Z]{2})\/2,([a-zA-Z]{2})-([a-zA-Z]{2})\/2\)\)/gm;
+const bundleAttackDirRender = /(\w+)\=\((\w+)==(\w+)\?(\w+)\(\):(\w+)\.dir\)\+(\w+)\.dirPlus/gm;
+const bundleStackRegexNew = /(\(http[s]:\/\/((sandbox|dev|mm_beta)\.|)moomoo\.io\/assets\/\w+-\w+\.js:\d+:\d+\))|bundle\.js/gm;
+const bundleUrlTest = /(http[s]?:\/\/(dev|sandbox|mm_beta|)\.moomoo\.io\/assets\/(\w+-\w+\.js))|bundle\.js/gm;
+const serverRegex = /(us|eu|gb|au|sg)-(west|east|south|north)/gm;
+const jqueryStackRegex = /(jquery-ui\.js|jquery-\d\.\d\.\d\.min\.js):\d+:\d+/gm;
+const playerCoordsAssign = /(\w)\.((x|y)\d)=(\w+\.(x|y)|(\w+)\[(\w+)\+\d\])/gm;
+const playerNewCoords = /(\w+)\.(x2|y2)=(\w+)\[(\w+)\+\d\]/gm;
+const turnSpeed = /turnSpeed\:(0|)\.(\d+)/gm;
+const bundleHats = /(\w+)\.skinIndex\=(\w+)\[(\w+)\+\d\],(\w+)\.tailIndex\=(\w+)\[(\w+)\+(\d+)\]/gm;
+
+const checkIsBundle = ({ stack }) => bundleStackRegexNew.exec(stack);
+const checkIfUseless = ({ stack }) => jqueryStackRegex.exec(stack);
+let patchedBundle = "";
+let injectedBundle = false;
+const oldCall = Function.prototype.call;
+const toString = Function.prototype.toString;
+let skinIndex = 0, tailIndex = 0;
+const isReloaded = () => player.reloads[player.weaponIndex] >= 1;
+
+customElements.define = new Proxy(customElements.define, {
+  __proto__: null,
+  apply(target, that, args) {
+    if (!injectedBundle) return;
+
+    return target.apply(that, args);
+  }
+})
+
+window.lagCompensation = function (player, type, value) {
+  const tickClamp = (~~(window.pingTime / 111)) + 1;
+
+  try {
+    return (!player.hitScare && !player.hitDelay && players.find(e => e.sid == player.sid)[type == "x2" ? "x3" : "y3"]) || value;
+  } catch(e) {
+    return value;
+  }
+};
+
+window.getSkinIndex = function (sid, skinIndex_) {
+  return (sid == playerSID) ? skinIndex : skinIndex_;
+}
+
+window.getTailIndex = function (sid, tailIndex_) {
+  return (sid == playerSID) ? tailIndex : tailIndex_;
+}
+
+Function.prototype.call = new Proxy(Function.prototype.call, {
+  apply(target, that, args) {
+    const bundleTest = checkIsBundle(new Error());
+
+    if (bundleTest) {
+      const mooBundleUrl = bundleUrlTest.exec(bundleTest[0]);
+      if (mooBundleUrl && !injectedBundle) {
+        if (mooBundleUrl[0]) {
+          injectNewBundle(mooBundleUrl[0]);
+
+          Function.prototype.call = oldCall;
+        };
+
+        throw new Error();
+      };
+    };
+
+    if (!bundleTest)
+      return target.apply(that, args);
+    else if (checkIfUseless(new Error())) throw new Error();
+  }
+});
+
+async function injectNewBundle(bundleUrl) {
+  injectedBundle = true;
+
+  let bundleText = await (await fetch(bundleUrl)).text();
+  const bundleDirFunc = bundleDir.exec(bundleText);
+  const bundleCoordsAssign = Array.from(bundleText.matchAll(playerCoordsAssign));
+  let goodAssigns = [];
+
+  for (const assigns of bundleCoordsAssign)
+    for (const match of assigns)
+      if (playerNewCoords.test(match)) goodAssigns.push(match);
+
+  goodAssigns = goodAssigns.map(assign => {
+    const [ varName, assignType ] = assign.split("=")[0].split(".");
+    const value = assign.split("=")[1];
+
+    return {
+      old: assign,
+      new: `${varName}.${assignType}=window.lagCompensation(${varName}, "${assignType}", ${value})`
+    };
+  });
+
+  for (const patch of goodAssigns)
+    bundleText = bundleText.replaceAll(patch.old, patch.new);
+
+  (new Function(bundleText))();
+}
+
+
 localStorage.removeItem("__frvr_analytics_storage");
 localStorage.removeItem("__frvr_rfc_uuidv4");
 try { localStorage.removeItem(Object.keys(localStorage).find(e => /deviceSignal/gm.test(e))) } catch(e) {};
@@ -216,6 +315,15 @@ Object.defineProperty(window, "FRVR", {
       allowNavigation: true
     }
   }, writable: false
+})
+
+Object.prototype.hasOwnProperty.call = new Proxy(Object.prototype.hasOwnProperty.call, {
+  __proto__: null,
+  apply(targetObj, thisObj, argsArr) {
+    if (/frvr|prebid|checkAdBlock/g.test((new Error()).stack.toLowerCase())) throw new Error("this nigga sped");
+
+    return targetObj.apply(thisObj, argsArr);
+  }
 })
 
 class CoreEncode {
@@ -3774,27 +3882,7 @@ let oldXY = {
 function calculateVelocity(player) {
   if (typeof player.moveDir != "number") return 0;
 
-  const hatMult = findID(store.hats, player.skinIndex)?.spdMult || 1;
-  const accMult = findID(store.accessories, player.tailIndex)?.spdMult || 1;
-  const wepMult = findID(items.weapons, player.weaponIndex)?.spdMult || 1;
-  let base = 0;
-
-  if (player.y2 < config.snowBiomeTop) base += config.snowSpeed;
-  else base += config.playerSpeed;
-
-  base *= hatMult;
-  base *= accMult;
-  base *= wepMult;
-
-  let xVel = Math.cos(player.moveDir);
-  let yVel = Math.sin(player.moveDir);
-  let magnitude = Math.hypot(xVel, yVel);
-
-  xVel /= magnitude;
-  yVel /= magnitude;
-
-  const velocity = Math.hypot(xVel, yVel) * game.tickRate * base;
-  return velocity;
+  return Math.max(Math.hypot(player.oldX - player.x2, player.oldY - player.y2), 5);
 };
 
 let virtualSkin = 0;
@@ -3856,7 +3944,7 @@ function updatePing() {
   const mu = pings.reduce((a, b) => a + b, 0) / pings.length;
   SD = 0;
   for (const _ of pings) SD += (_ - mu) * (_ - mu);
-  SD = Math.min(pingTime, Math.sqrt(SD));
+  SD = Math.min(120, Math.sqrt(SD));
 }
 setInterval(() => {
   packet("0");
@@ -3909,12 +3997,14 @@ function updatePlayers(data) {
       tmpObj.t2 = game.lastTick;
       tmpObj.x1 = tmpObj.x;
       tmpObj.y1 = tmpObj.y;
+      tmpObj.oldX = tmpObj.x2;
+      tmpObj.oldY = tmpObj.y2;
       tmpObj.dt = 0;
       tmpObj.x2 = data[i + 1];
       tmpObj.y2 = data[i + 2];
-      tmpObj.moveDir = tmpObj.sid == playerSID ? getMoveDir() : Math.atan2(tmpObj.y2 - tmpObj.y1, tmpObj.x2 - tmpObj.x1);
-      tmpObj.x3 = tmpObj.x2 + (configurer.usePredictions ? ((Math.cos(tmpObj.moveDir) * calculateVelocity(tmpObj) * ticksClamp) || 0) : 0);
-      tmpObj.y3 = tmpObj.y2 + (configurer.usePredictions ? ((Math.sin(tmpObj.moveDir) * calculateVelocity(tmpObj) * ticksClamp) || 0) : 0);
+      tmpObj.moveDir = tmpObj.sid == playerSID ? getMoveDir() : Math.atan2(tmpObj.y2 - tmpObj.oldY, tmpObj.x2 - tmpObj.oldX);
+      tmpObj.x3 = tmpObj.x2 + Math.cos(tmpObj.moveDir) * calculateVelocity(tmpObj);
+      tmpObj.y3 = tmpObj.y2 + Math.sin(tmpObj.moveDir) * calculateVelocity(tmpObj);
       tmpObj.d1 = (tmpObj.d2 === undefined) ? data[i + 3] : tmpObj.d2;
       tmpObj.d2 = data[i + 3];
       tmpObj.buildIndex = data[i + 4];
@@ -4001,12 +4091,6 @@ function checkPotHit() {
 
 function onUpdate() {
   const ticksClamp = Math.ceil(pingTime / 111);
-
-  near.x3 = near.x2 + (Math.cos(near.moveDir) * calculateVelocity(near) * ticksClamp) || 0;
-  near.y3 = near.y2 + (Math.sin(near.moveDir) * calculateVelocity(near) * ticksClamp) || 0;
-
-  player.x3 = player.x2 + (configurer.usePredictions ? ((Math.cos(player.moveDir) * calculateVelocity(player) * ticksClamp) || 0) : 0);
-  player.y3 = player.y2 + (configurer.usePredictions ? ((Math.sin(player.moveDir) * calculateVelocity(player) * ticksClamp) || 0) : 0);
 
   nearestGameObjects.sort((a, b) => Math.hypot(b.x - near.x3, b.y - near.y3) - Math.hypot(a.x - near.x3, a.y - near.y3)).forEach(obj => {
     if (near.dist2 > 180 ||
