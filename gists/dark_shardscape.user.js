@@ -206,23 +206,23 @@ CanvasRenderingContext2D.prototype.lineTo = new Proxy(CanvasRenderingContext2D.p
 function animate(ctx) {
   if (!player) return;
 
-  const deltat = Date.now() - lastUpd;
-  const tmpDist = Math.hypot(camX - player.x, camY - player.y);
+  const deltat = performance.now() - lastUpd;
+  const tmpDist = Math.hypot(camX - player.x, camY - player.y) / 2;
   const tmpDir = Math.atan2(player.y - camY, player.x - camX);
   const camSpd = Math.min(tmpDist * 0.01 * deltat, tmpDist);
 
   for (const player_ of players) {
     player.dt += deltat;
 
-    let tmpDiff = player_.x2 - (player_.x1 || player.x2);
+    let tmpDiff = player_.x3 - (player_.x1 || player.x3);
     let tmpRate = Math.min(1.7, player_.dt / 170);
 
-    player_.x = (player_.x1 || player.x2) + tmpDiff * tmpRate;
-    tmpDiff = player_.y2 - (player_.y1 || player.y2);
-    player_.y = (player_.y1 || player.y2) + tmpDiff * tmpRate;
+    player_.x = (player_.x1 || player.x3) + tmpDiff * tmpRate;
+    tmpDiff = player_.y3 - (player_.y1 || player.y3);
+    player_.y = (player_.y1 || player.y3) + tmpDiff * tmpRate;
   }
 
-  lastUpd = Date.now();
+  lastUpd = performance.now();
 
   if (tmpDist > 100) {
     camX = player.x;
