@@ -149,19 +149,6 @@ async function injectNewBundle(bundleUrl) {
     for (const match of assigns)
       if (playerNewCoords.test(match)) goodAssigns.push(match);
 
-  goodAssigns = goodAssigns.map(assign => {
-    const [ varName, assignType ] = assign.split("=")[0].split(".");
-    const value = assign.split("=")[1];
-
-    return {
-      old: assign,
-      new: `${varName}.${assignType}=window.lagCompensation(${varName}, "${assignType}", ${value})`
-    };
-  });
-
-  for (const patch of goodAssigns)
-    bundleText = bundleText.replaceAll(patch.old, patch.new);
-
   (new Function(bundleText))();
 }
 
