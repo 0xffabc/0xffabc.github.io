@@ -3567,7 +3567,7 @@ function getMoveDir() {
 }
 
 function getSafeDir() {
-  lastDir = (inbullspam || didAntibullBefore) ? near.aim : Math.atan2(mouseY - (screenHeight / 2), mouseX - (screenWidth / 2));
+  lastDir = inbullspam ? near.aim : Math.atan2(mouseY - (screenHeight / 2), mouseX - (screenWidth / 2));
   return lastDir;
 }
 
