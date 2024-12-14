@@ -720,7 +720,7 @@ client_menu.addEventListener("dragend", e => {
 });
 const configurer = {
   agressive: true,
-  doPrePlace: location.host.includes("mohmoh"),
+  doPrePlace: false,
   doAutoHold: true,
   doFastSwitch: true,
   doRV3Night: true,
@@ -844,6 +844,7 @@ new Descriptor("column5", "Select song lyrics", "[NULL]", `Select song by name <
 Lyrics API is textyl.co`);
 new Toggle("column6", "Constant soldier", "doConstaSoldier", "Always holds soldier to reduce damage as much as it can");
 new Toggle("column6", "Preemptive preplace", "doAutoHold", "Automatically holds v and f on objects that will break. A bit gay.");
+new Toggle("column6", "Aggressive preplace", "doPrePlace", "Spams A LOT!");
 new Toggle("column6", "Autoinsta reset", "doResetInsta", "Unequips soldier when enemy is ready to insta and qholds the first hit. Ultra gay.");
 
 
@@ -3566,7 +3567,7 @@ function getMoveDir() {
 }
 
 function getSafeDir() {
-  lastDir = inbullspam ? near.aim : Math.atan2(mouseY - (screenHeight / 2), mouseX - (screenWidth / 2));
+  lastDir = (inbullspam || didAntibullBefore) ? near.aim : Math.atan2(mouseY - (screenHeight / 2), mouseX - (screenWidth / 2));
   return lastDir;
 }
 
@@ -3760,6 +3761,8 @@ function updateQueue() {
   });
 }
 
+let lastPre = Date.now();
+
 setInterval(() => {
   if ((Date.now() - player?.healTimestamp > 121 + SD - pingTime) && !player?.outhealed) {
     player.outhealed = true;
@@ -3769,6 +3772,24 @@ setInterval(() => {
   if (!game.ticksResynced && Date.now() - game.tickResync <= 7) {
     game.ticksResynced = true;
     onUpdate();
+  }
+
+  if (configurer.doPrePlace && Date.now() - lastPre > 22) {
+    lastPre = Date.now();
+
+    nearestGameObjects.sort((a, b) => Math.hypot(b.x - near.x3, b.y - near.y3) - Math.hypot(a.x - near.x3, a.y - near.y3)).forEach(obj => {
+      if (near.dist2 > 180 ||
+          Math.hypot(obj.x - player.x3, obj.y - player.y3) > config.playerScale + obj.scale) return;
+
+      const angle = Math.atan2(obj.y - player.y3, obj.x - player.x3);
+      const angles = traps.autoPlace(obj.sid, null, angle - Math.PI / 2, angle + Math.PI / 2, false, true);
+
+      if (!angles?.length) return;
+
+      const anglePerfect = angles.sort((a, b) => Math.abs(a - angle) - Math.abs(b - angle))[0];
+
+      place(2, anglePerfect, 0);
+    });
   }
 }, 1);
 setInterval(() => packetsCount = 0, 1000);
@@ -4102,7 +4123,7 @@ function onUpdate() {
   const ticksClamp = Math.ceil(pingTime / 111);
   nearestGameObjects.sort((a, b) => Math.hypot(b.x - near.x3, b.y - near.y3) - Math.hypot(a.x - near.x3, a.y - near.y3)).forEach(obj => {
     if (near.dist2 > 180 ||
-        Math.hypot(obj.x - player.x3, obj.y - player.y3) > config.playerScale + obj.scale) return;
+        Math.hypot(obj.x - player.x3, obj.y - player.y3) > config.playerScale + obj.scale || !configurer.doAutoHold) return;
 
     const angle = Math.atan2(obj.y - player.y3, obj.x - player.x3);
     const angles = traps.autoPlace(obj.sid, null, angle - Math.PI / 2, angle + Math.PI / 2, false, true);
@@ -4188,7 +4209,7 @@ function onUpdate() {
     }
 
     if (storeMenu.style.display != "block") {
-      accChanger() && hatChanger();
+      !antibull(near) && accChanger() && hatChanger();
     }
     if (configurer.doAutoPush && enemy.length && tmpObj.skinIndex != 45) {
       autoPush();
@@ -4258,6 +4279,34 @@ function loadGameObject(data) {
     i += 8;
   }
 }
+
+let turretReload = Date.now();
+
+function antibull(near) {
+  if (!near?.dist2) return false;
+
+  if (player.reloads[player.weapons[0]] == 0 && near.dist3 < config.playerScale + items.weapons[player.weapons[0]].range) {
+    inbullspam = true;
+
+    buyEquip(Date.now() - turretReload > 2500 ? (turretReload = Date.now(), 53) : 7);
+    buyEquip(21, true);
+
+    selectWeapon(player.weapons[0]);
+    sendAutoGather();
+
+    inbullspam = false;
+
+    return true;
+  } else if (near.reloads[near.weapons[0]] == 0 && near.dist3 < config.playerScale + items.weapons[near.weapons[0]].range) {
+    buyEquip(11);
+    buyEquip(21, true);
+
+    return true;
+  } else if (near.reloads[near.weapons[1]] == 0 || near.reloads[near.weapons[53]] == 0) {
+    buyEquip(22);
+  } else buyEquip(6);
+}
+
 // GATHER ANIMATION:
 function gatherAnimation(sid, didHit, index) {
   tmpObj = findPlayerBySID(sid);
