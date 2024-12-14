@@ -4,37 +4,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
  </head>
   <body>
-    <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Person",
-  "name": "0xffabc",
-  "url": "https://0xffabc.github.io",
-  "image": "https://mohmoh-vanilla.onrender.com/a/0xffabc.webp",
-  "sameAs": [
-    "https://github.com/0xffabc",
-    "https://doxbin.com/user/0xffabc",
-    "@0xffabc at discord"
-  ],
-  "jobTitle": "Infosec & software engineering",
-  "address": {
-    "@type": "PostalAddress",
-    "addressLocality": "St. Vostochnya",
-    "addressRegion": "Antarctica",
-    "postalCode": "000000",
-    "addressCountry": "Antarctica"
-  }
-}
-    </script>
-    <script src = "https://raw.githubusercontent.com/scottschiller/Snowstorm/refs/heads/master/snowstorm-min.js"> </script>
-    <script>
-      snowStorm.excludeMobile = false;
-      snowStorm.snowColor = "#ffffff";
-      snowStorm.flakesMaxActive = 100;
-      snowStorm.start();
-    </script>
     <div id = "center">
-      <button onclick = "Array.from(document.querySelectorAll('.blocks'), _ => _.style.display = 'none'); document.querySelectorAll('.blocks')[0].style.display = 'block'"> About me </button> <button onclick = "Array.from(document.querySelectorAll('.blocks'), _ => _.style.display = 'none'); document.querySelectorAll('.blocks')[1].style.display = 'block'"> Social & profiles </button> <button onclick = "Array.from(document.querySelectorAll('.blocks'), _ => _.style.display = 'none'); document.querySelectorAll('.blocks')[2].style.display = 'block'"> Projects </button> <button onclick = "Array.from(document.querySelectorAll('.blocks'), _ => _.style.display = 'none'); document.querySelectorAll('.blocks')[3].style.display = 'block'"> Scripts & Downloads </button>
+      <div style = "position: sticky; top: 0"> <button onclick = "Array.from(document.querySelectorAll('.blocks'), _ => _.style.display = 'none'); document.querySelectorAll('.blocks')[0].style.display = 'block'"> About me </button> <button onclick = "Array.from(document.querySelectorAll('.blocks'), _ => _.style.display = 'none'); document.querySelectorAll('.blocks')[1].style.display = 'block'"> Social & profiles </button> <button onclick = "Array.from(document.querySelectorAll('.blocks'), _ => _.style.display = 'none'); document.querySelectorAll('.blocks')[2].style.display = 'block'"> Projects </button> <button onclick = "Array.from(document.querySelectorAll('.blocks'), _ => _.style.display = 'none'); document.querySelectorAll('.blocks')[3].style.display = 'block'"> Scripts & Downloads </button> </div>
       <div class = "blocks">
         <h2> I am 0xffabc, frontend developer </h2>
         Languages I code in: javascript / typescript, Rust, pascal or python in rare cases <br>
@@ -49,15 +20,8 @@
         
         My github account: <a href = "https://github.com/0xfabc"> @0xffabc </a> <br>
         Discord: @0xffabc <br> <br> <hr>
-        
-        Global auditory socials <br>
-        YouTube: <a href = "https://youtube.com/0xffabc"> @0xffabc </a> <br>
-        Greasyfork: <a href = "https://greasyfork.org/ru/users/1185687-0xffabc"> @0xffabc </a> <br> <hr>
-        
+
         My discord server: <a href = "https://discord.gg/Rd9PfjaewT"> Click here to join </a> <br>
-        
-        Mostly keeping my socials private.
-        
       </div>
       <div class = "blocks" style = "display: none; max-height: 40%; text-align: center; overflow: visible">
         <h2> My projects </h2>
@@ -123,7 +87,7 @@
           Can be easily compiled to WASM. Initially was made with aim of fillbotting moomoo.io servers. Works, but didn't reach it's aim.
         </div>
       </div>
-      <div class = "blocks" style = "display: none; max-width: 90%">
+      <div class = "blocks" style = "display: none">
         <h2> Scripts library and their downloads </h2>
         <pre>
           Here you can download my scripts for different websites or libraries with binaries. <br> You can freely use them in your own projects - just leave out my name on them. <br> Make sure you're frequently updating them.
@@ -163,8 +127,7 @@
         width: 100%;
         height: auto;
         border-radius: 20px;
-        backdrop-filter: blur(5px);
-        background: rgba(0, 0, 0, 0.5);
+        background: rgb(0, 0, 0, 0.3);
       }
       * {
         font-family: Arial;
@@ -180,7 +143,7 @@
       }
 
       html {
-        background: url(https://raw.githubusercontent.com/0xffabc/iowm/refs/heads/main/src/wallpapers/desktop-wallpaper-abstract-full-and-background-sci-fi-abstract.jpg);
+        background: rgb(50, 50, 50);
         background-size: 100%;
       }
 
@@ -189,22 +152,30 @@
         position: fixed;
         top: 50%;
         left: 50%;
-        width: auto;
-        max-height: 75%;
-        background: rgba(0, 0, 0, 0.2);
-        backdrop-filter: blur(5px);
-        border-radius: 20px;
-        color: rgba(255, 255, 255, 0.9);
-        mix-blend-mode: plus-lighter;
+        
+        max-height: 70%;
+        max-width: 70%;
+        
+        height: 70%;
+        width: 70%;
+        
+        background: rgb(40, 40, 40);
+        scrollbar-width: none;
+        color: rgba(255, 255, 255, 0.5);
         transition: all 0.5s;
         text-align: center;
-        overflow: auto;
+        overflow: scroll;
       }
       
       button {
         background: rgba(0, 0, 0, 0.3);
         color: white;
         border: 0;
+        opacity: 5%;
+      }
+      
+      button:hover {
+        opacity: 100%;
       }
     </style>
   </body>
