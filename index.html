@@ -5,7 +5,21 @@
  </head>
   <body>
     <script src = "https://doxbin.org/files/snowflakes.js"> </script>
+    <script>
+      const discordStatus = document.createElement("div");
+      discordStatus.style = "position: fixed; right: 0; top: 0";
+      
+      document.documentElement.appendChild(discordStatus);
 
+      fetch("https://api.lanyard.rest/v1/users/1164521370466652180").then(e => e.json()).then(data => {
+        discordStatus.innerHTML = `
+        <p> ${data.discord_user.username} </p>
+        ${data.activities[0].type == "2" ? "Listening" : "Playing"}
+        <a href = "https://${data.activites[0].state}"> ${data.activities[0].name} </a>
+        `;
+      });
+    </script>
+    
     <div style = "height: 100%; background: rgb(0, 0, 0, 0.3); position: fixed; left: 0; top: 0; border-radius: 20px">
       <p style = "color: white"> Table of contents </p>
     
