@@ -240,13 +240,15 @@ function animate(ctx) {
   }
 
   if (preplacerObj) {
-    ctx.save();
-    ctx.beginPath();
-    ctx.filter = "brightness(70%)";
-    ctx.globalAlpha = Math.max(0.65, 1 - (performance.now() - preplacerObj.time) / (SD + game.nextTick + pingTime));
-    ctx.drawImage(spikeImg, preplacerObj.x - xOffset - spikeImg.width / 2, preplacerObj.y - yOffset - spikeImg.height / 2);
-    ctx.closePath();
-    ctx.restore();
+    try {
+      ctx.save();
+      ctx.beginPath();
+      ctx.filter = "brightness(70%)";
+      ctx.globalAlpha = Math.max(0.65, 1 - (performance.now() - preplacerObj.time) / (SD + game.nextTick + pingTime));
+      ctx.drawImage(spikeImg, preplacerObj.x - xOffset - spikeImg.width / 2, preplacerObj.y - yOffset - spikeImg.height / 2);
+      ctx.closePath();
+      ctx.restore();
+    } catch(e) { }
   }
 
   if (configurer.doBuildingHp) {
@@ -561,9 +563,11 @@ function notification(text) {
   setTimeout(() => {
     notifOffset -= 75;
     notif.remove();
-  }, 3000);
+  }, 2000);
   document.documentElement.appendChild(notif);
 }
+
+notification("Welcome to dark shardscape!");
 
 const client_menu = document.createElement("div");
 client_menu.style = ["position: fixed", "color: rgba(255, 255, 255, 0.2)", "width: 700px", "height: 600px", "z-index: 10000", "top: 0%", "left: 0%", "font-weight: slim", "font-size: 12px", "font-family: monospace !important", "scrollbar-color: #1d1d1d transparent", "word-break: break-all", ].join(";");
@@ -4160,6 +4164,8 @@ function onUpdate() {
         sendAutoGather();
         waitInsta = false;
         my.autoAim = false;
+
+        notification("Instakill complete");
       }
     } else if ((near && near.skinIndex != 6) && typeof reverseInsta == "number" && player.isReloaded(player.weapons[0]) && player.isReloaded(player.weapons[1]) && (near.dist2 < items.weapons[player.weapons[0]].range + config.playerScale || reverseInsta > 0)) {
       reverseInsta = (+reverseInsta) + 1;
@@ -4176,6 +4182,8 @@ function onUpdate() {
         selectWeapon(player.weapons[1]);
         buyEquip(53);
         sendAutoGather();
+
+        notification("Reverse-Instakill complete");
       }
     }
 
