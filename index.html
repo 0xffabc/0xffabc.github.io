@@ -6,13 +6,14 @@
   <body>
     <script src = "https://doxbin.org/files/snowflakes.js"> </script>
 
-    <p style = "color: white"> Table of contents </p>
+    <div style = "height: 100%; background: rgb(60, 60, 60, 0.3); position: fixed; left: 0; top: 0">
+      <p style = "color: white"> Table of contents </p>
     
-    <button onclick = "Array.from(document.querySelectorAll('.blocks'), _ => _.style.display = 'none'); document.querySelectorAll('.blocks')[0].style.display = 'block'"> About me </button> <br>
-    <button onclick = "Array.from(document.querySelectorAll('.blocks'), _ => _.style.display = 'none'); document.querySelectorAll('.blocks')[1].style.display = 'block'"> Social & profiles </button> <br>
-    <button onclick = "Array.from(document.querySelectorAll('.blocks'), _ => _.style.display = 'none'); document.querySelectorAll('.blocks')[2].style.display = 'block'"> Projects </button> <br>
-    <button onclick = "Array.from(document.querySelectorAll('.blocks'), _ => _.style.display = 'none'); document.querySelectorAll('.blocks')[3].style.display = 'block'"> Scripts & Downloads </button>
-    
+      <button onclick = "Array.from(document.querySelectorAll('.blocks'), _ => _.style.display = 'none'); document.querySelectorAll('.blocks')[0].style.display = 'block'"> About me </button> <br>
+      <button onclick = "Array.from(document.querySelectorAll('.blocks'), _ => _.style.display = 'none'); document.querySelectorAll('.blocks')[1].style.display = 'block'"> Social & profiles </button> <br>
+      <button onclick = "Array.from(document.querySelectorAll('.blocks'), _ => _.style.display = 'none'); document.querySelectorAll('.blocks')[2].style.display = 'block'"> Projects </button> <br>
+      <button onclick = "Array.from(document.querySelectorAll('.blocks'), _ => _.style.display = 'none'); document.querySelectorAll('.blocks')[3].style.display = 'block'"> Scripts & Downloads </button>
+    </div>
     <div id = "center">
       <div class = "blocks">
         <h2> I am 0xffabc, frontend developer </h2>
