@@ -5,20 +5,6 @@
  </head>
   <body>
     <script src = "https://doxbin.org/files/snowflakes.js"> </script>
-    <script>
-      const discordStatus = document.createElement("div");
-      discordStatus.style = "position: fixed; right: 0; top: 0; color: white; font-size: 10px";
-      
-      document.documentElement.appendChild(discordStatus);
-
-      fetch("https://api.lanyard.rest/v1/users/1164521370466652180").then(e => e.json()).then(({ data }) => {
-        discordStatus.innerHTML = `
-        <p> ${data.discord_user.username} </p>
-        ${data.activities.length ? (data.activities[0].type == "2" ? "Listening" : "Playing") : "Idle"}
-        <a href = "https://${data.activities.length ? data.activities[0].state : "Idle"}"> ${data.activities.length ? data.activities[0].name : ""} </a>
-        `;
-      });
-    </script>
     
     <div style = "height: 100%; background: rgb(0, 0, 0, 0.3); position: fixed; left: 0; top: 0; border-radius: 20px">
       <p style = "color: white"> Table of contents </p>
@@ -31,8 +17,9 @@
     <div id = "center">
       <div class = "blocks">
         <h2> I am 0xffabc, frontend developer </h2>
-        Languages I code in: javascript / typescript, Rust, pascal or python in rare cases <br>
-        Favourite music genres: Progressive trance, techno, new rave <br>
+        Languages I code in: javascript / typescript, Rust, pascal or python in rare cases
+        <p id = "status"> </p>
+        Favourite music genres: Progressive trance, techno, new rave
         <p><img src="https://shields.io/badge/JavaScript-F7DF1E?logo=JavaScript&amp;logoColor=000&amp;style=flat-square" alt="i"> <img src="https://shields.io/badge/TypeScript-3178C6?logo=TypeScript&amp;logoColor=FFF&amp;style=flat-square" alt="i"> <img src="https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&amp;logo=vuedotjs&amp;logoColor=4FC08D" alt="i"> <img src="https://img.shields.io/badge/Express.js-404D59?style=for-the-badge" alt="i"> <img src="https://img.shields.io/badge/Rust-000000?style=for-the-badge&amp;logo=rust&amp;logoColor=white" alt="i"></p>
         <p>You can contact me at my discord (@0xffabc)</p>
         <p><img src="https://github-readme-stats.vercel.app/api?username=0xffabc&amp;show_icons=true&amp;theme=gruvbox" alt="Stats">
@@ -143,6 +130,17 @@
         </div> <br>
       </div>
     </div>
+
+    <script>
+      const discordStatus = document.getElementById("status");
+
+      fetch("https://api.lanyard.rest/v1/users/1164521370466652180").then(e => e.json()).then(({ data }) => {
+        discordStatus.innerHTML = `
+        ${data.activities.length ? (data.activities[0].type == "2" ? "Listening" : "Playing") : "Idle"}
+        <a href = "https://${data.activities.length ? data.activities[0].state : "Idle"}"> ${data.activities.length ? data.activities[0].name : ""} </a>
+        `;
+      });
+    </script>
 
     <style>
       .info {
