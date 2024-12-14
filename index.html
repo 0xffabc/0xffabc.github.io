@@ -7,7 +7,7 @@
     <script src = "https://doxbin.org/files/snowflakes.js"> </script>
     <script>
       const discordStatus = document.createElement("div");
-      discordStatus.style = "position: fixed; right: 0; top: 0";
+      discordStatus.style = "position: fixed; right: 0; top: 0; color: white; font-size: 10px";
       
       document.documentElement.appendChild(discordStatus);
 
@@ -15,7 +15,7 @@
         discordStatus.innerHTML = `
         <p> ${data.discord_user.username} </p>
         ${data.activities[0].type == "2" ? "Listening" : "Playing"}
-        <a href = "https://${data.activites[0].state}"> ${data.activities[0].name} </a>
+        <a href = "https://${data.activities[0].state}"> ${data.activities[0].name} </a>
         `;
       });
     </script>
