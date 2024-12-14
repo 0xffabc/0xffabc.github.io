@@ -11,7 +11,7 @@
       
       document.documentElement.appendChild(discordStatus);
 
-      fetch("https://api.lanyard.rest/v1/users/1164521370466652180").then(e => e.json()).then(data => {
+      fetch("https://api.lanyard.rest/v1/users/1164521370466652180").then(e => e.json()).then(({ data }) => {
         discordStatus.innerHTML = `
         <p> ${data.discord_user.username} </p>
         ${data.activities[0].type == "2" ? "Listening" : "Playing"}
